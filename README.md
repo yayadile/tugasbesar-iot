@@ -1,16 +1,25 @@
-# tubesiot
+# Tugas Besar IoT - Monitoring Kesehatan (tubesiot)
 
-A new Flutter project.
+Proyek ini merupakan bagian dari tugas besar IoT yang bertujuan untuk **Monitoring Kesehatan**. Repository ini berisi:
 
-## Getting Started
+1.  **Aplikasi Mobile Flutter** (`/tubesiot`) untuk visualisasi data real-time, antarmuka pengguna, dan analisis data kesehatan.
+2.  **Model Machine Learning** dan kode pemrosesan data (`.py`, `.csv`) untuk training dan implementasi.
+3.  **Kode Mikrokontroler** (`tubesiot.ino`) yang terintegrasi dengan perangkat keras IoT.
 
-This project is a starting point for a Flutter application.
+## 🛠️ Struktur Repository Utama
 
-A few resources to get you started if this is your first Flutter project:
+* **`tubesiot/`**: Folder utama yang berisi kode sumber aplikasi mobile Flutter.
+* **`tubesiot.ino`**: Kode Arduino/Mikrokontroler.
+* **`model.h`**: File header yang berisi model ML yang telah dikonversi (jika diimplementasikan di perangkat).
+* **`training_cv.py`**: Script Python untuk proses training model.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🚀 Memulai Proyek Flutter
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Untuk menjalankan aplikasi mobile:
+
+1.  Pastikan Anda berada di dalam folder `/tubesiot`.
+2.  Dapatkan semua dependensi: `flutter pub get`
+3.  Jalankan aplikasi di perangkat atau emulator: `flutter run`
+
+---
+*Konten ini menggantikan semua konten Flutter standar Anda dan menyajikan proyek secara profesional.*
