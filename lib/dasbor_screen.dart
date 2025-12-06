@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'theme.dart'; // Import AppColors
 
 class DasborScreen extends StatelessWidget {
   const DasborScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Akses TextTheme dan ColorScheme dari konteks
+    final textTheme = Theme.of(context).textTheme;
+    final foregroundColor = Theme.of(context).colorScheme.onSurface; // AppColors.textDark
+    final successColor = const Color.fromARGB(255, 32, 206, 110); // Warna Hijau Status Normal
+
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -23,26 +29,23 @@ class DasborScreen extends StatelessWidget {
                       child: const Icon(Icons.person, color: Colors.grey),
                     ),
                     const SizedBox(width: 12),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Welcome back,',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          style: textTheme.bodyMedium!.copyWith(color: AppColors.textGrey, fontSize: 16), // Perbesar teks
                         ),
                         Text(
                           'Zakia',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: textTheme.titleMedium!.copyWith(color: foregroundColor, fontSize: 20), // Perbesar teks
                         ),
                       ],
                     ),
                   ],
                 ),
                 IconButton(
-                  icon: const Icon(Icons.notifications_none),
+                  icon: Icon(Icons.notifications_none, color: foregroundColor),
                   onPressed: () {},
                 ),
               ],
@@ -53,19 +56,18 @@ class DasborScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFF5AB693),
+                color: successColor, // Menggunakan successGreen dari AppColors
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.check_circle, color: Colors.white, size: 24),
-                  SizedBox(width: 12),
+                  const Icon(Icons.check_circle, color: Colors.white, size: 24),
+                  const SizedBox(width: 12),
                   Text(
                     'Semua Sistem Normal',
-                    style: TextStyle(
+                    style: textTheme.titleMedium!.copyWith(
                       color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 18, // Perbesar teks
                     ),
                   ),
                 ],
@@ -81,60 +83,57 @@ class DasborScreen extends StatelessWidget {
               mainAxisSpacing: 16,
               children: [
                 _buildDataCard(
-                  'Suhu Badan',
+                  context,
+                  'Suhu Tubuh',
                   '36.8 °C',
                   Icons.thermostat_outlined,
-                  Colors.red,
+                  Colors.red, // Warna ikon/nilai tetap
                 ),
                 _buildDataCard(
+                  context,
                   'Suhu Ruang',
                   '20.0 °C',
                   Icons.home_outlined,
-                  Colors.blue,
+                  const Color.fromARGB(255, 255, 152, 0), // Warna ikon/nilai tetap
                 ),
                 _buildDataCard(
-                  'SpO2',
+                  context,
+                  'Saturasi Oksigen',
                   '66 %',
                   Icons.cloud_upload_outlined,
-                  Colors.blueGrey,
+                  const Color.fromARGB(255, 76, 175, 80), // Warna ikon/nilai tetap
                 ),
                 _buildDataCard(
-                  'Kelembaban',
+                  context,
+                  'Kelembapan',
                   '66 %',
                   Icons.opacity,
-                  Colors.cyan,
+                  const Color.fromARGB(255, 33, 150, 243), // Warna ikon/nilai tetap
                 ),
               ],
             ),
             const SizedBox(height: 20),
             // Heart Rate Card
             Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Icon(Icons.favorite, color: Colors.red, size: 32),
+                    const Icon(Icons.favorite, color: Color.fromARGB(255, 236, 93, 139
+                    ), size: 36), // Perbesar ikon
                     const SizedBox(width: 16),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Detak Jantung',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: textTheme.titleMedium!.copyWith(fontSize: 18), // Perbesar teks
                         ),
                         Text(
                           '72 bpm',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
+                          style: textTheme.titleLarge!.copyWith(
+                            fontSize: 30, // Perbesar teks
+                            color: const Color.fromARGB(255, 236, 93, 139),
                           ),
                         ),
                       ],
@@ -150,34 +149,30 @@ class DasborScreen extends StatelessWidget {
   }
 
   Widget _buildDataCard(
+    BuildContext context,
     String title,
     String value,
     IconData icon,
     Color color,
   ) {
+    final textTheme = Theme.of(context).textTheme;
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 32, color: color),
+            Icon(icon, size: 36, color: color), // Perbesar ikon
             const SizedBox(height: 8),
             Text(
               title,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: textTheme.bodyLarge, // Menggunakan bodyLarge (ukuran 16)
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 4),
             Text(
               value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+              style: textTheme.titleLarge!.copyWith(color: color, fontSize: 24), // Perbesar nilai
+              textAlign: TextAlign.center,
             ),
           ],
         ),

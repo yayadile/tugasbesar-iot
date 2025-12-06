@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'theme.dart'; // Import AppColors
 
 class PengaturanScreen extends StatefulWidget {
   const PengaturanScreen({super.key});
@@ -12,6 +13,10 @@ class _PengaturanScreenState extends State<PengaturanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final foregroundColor = Theme.of(context).colorScheme.onSurface;
+    final successColor = const Color.fromARGB(255, 2, 115, 121); // Untuk Switch
+
     return Scaffold(
       appBar: AppBar(title: const Text('Pengaturan')),
       body: SingleChildScrollView(
@@ -21,55 +26,53 @@ class _PengaturanScreenState extends State<PengaturanScreen> {
           children: [
             // Profile Section
             Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
               child: ListTile(
                 leading: CircleAvatar(
-                  radius: 24,
-                  backgroundColor: Colors.grey[300],
-                  child: const Icon(Icons.person, color: Colors.grey),
+                  radius: 28, // Perbesar avatar
+                  backgroundColor: AppColors.primaryBlue.withOpacity(0.1), // Gunakan primary color baru
+                  child: Icon(Icons.person, color: AppColors.primaryBlue),
                 ),
-                title: const Text('Zakia'),
-                subtitle: const Text('Lihat & edit profil'),
-                trailing: const Icon(Icons.chevron_right),
+                title: Text(
+                  'Zakia',
+                  style: textTheme.titleMedium!.copyWith(color: foregroundColor), // Perbesar teks
+                ),
+                subtitle: Text(
+                  'Lihat & edit profil',
+                  style: textTheme.bodyLarge!.copyWith(color: AppColors.textGrey), // Perbesar teks
+                ),
+                trailing: Icon(Icons.chevron_right, color: AppColors.textGrey),
                 onTap: () {},
               ),
             ),
             const SizedBox(height: 20),
             // Account Section
-            const Text(
+            Text(
               'AKUN',
-              style: TextStyle(
-                fontSize: 14,
+              style: textTheme.bodyMedium!.copyWith(
+                fontSize: 16, // Perbesar teks
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: AppColors.textGrey,
               ),
             ),
             const SizedBox(height: 8),
             Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
               child: Column(
                 children: [
-                  ListTile(
-                    title: const Text('Nama Pengguna'),
-                    trailing: const Icon(Icons.chevron_right),
+                  _buildSettingsTile(
+                    context,
+                    title: 'Nama Pengguna',
                     onTap: () {},
                   ),
-                  const Divider(),
-                  ListTile(
-                    title: const Text('Kata Sandi'),
-                    trailing: const Icon(Icons.chevron_right),
+                  const Divider(height: 1),
+                  _buildSettingsTile(
+                    context,
+                    title: 'Kata Sandi',
                     onTap: () {},
                   ),
-                  const Divider(),
-                  ListTile(
-                    title: const Text('ID Klien'),
-                    trailing: const Icon(Icons.chevron_right),
+                  const Divider(height: 1),
+                  _buildSettingsTile(
+                    context,
+                    title: 'ID Klien',
                     onTap: () {},
                   ),
                 ],
@@ -77,25 +80,24 @@ class _PengaturanScreenState extends State<PengaturanScreen> {
             ),
             const SizedBox(height: 20),
             // Settings Section
-            const Text(
+            Text(
               'PENGATURAN',
-              style: TextStyle(
-                fontSize: 14,
+              style: textTheme.bodyMedium!.copyWith(
+                fontSize: 16, // Perbesar teks
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: AppColors.textGrey,
               ),
             ),
             const SizedBox(height: 8),
             Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
               child: Column(
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.notifications),
-                    title: const Text('Notifikasi'),
+                    leading: Icon(Icons.notifications, color: foregroundColor),
+                    title: Text(
+                      'Notifikasi',
+                      style: textTheme.bodyLarge, // Perbesar teks
+                    ),
                     trailing: Switch(
                       value: _notificationsEnabled,
                       onChanged: (value) {
@@ -103,14 +105,17 @@ class _PengaturanScreenState extends State<PengaturanScreen> {
                           _notificationsEnabled = value;
                         });
                       },
-                      activeColor: const Color(0xFF5AB693),
+                      activeColor: successColor, // Menggunakan successColor
                     ),
                   ),
-                  const Divider(),
+                  const Divider(height: 1),
                   ListTile(
-                    leading: const Icon(Icons.info),
-                    title: const Text('Tentang Aplikasi'),
-                    trailing: const Icon(Icons.chevron_right),
+                    leading: Icon(Icons.info, color: foregroundColor),
+                    title: Text(
+                      'Tentang Aplikasi',
+                      style: textTheme.bodyLarge, // Perbesar teks
+                    ),
+                    trailing: Icon(Icons.chevron_right, color: AppColors.textGrey),
                     onTap: () {},
                   ),
                 ],
@@ -119,6 +124,22 @@ class _PengaturanScreenState extends State<PengaturanScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSettingsTile(
+    BuildContext context, {
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    return ListTile(
+      title: Text(
+        title,
+        style: textTheme.bodyLarge, // Perbesar teks
+      ),
+      trailing: Icon(Icons.chevron_right, color: AppColors.textGrey),
+      onTap: onTap,
     );
   }
 }

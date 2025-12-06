@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dasbor_screen.dart';
 import 'riwayat_screen.dart';
 import 'pengaturan_screen.dart';
+import 'theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,14 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'IoT Health Monitor',
-      theme: ThemeData(
-        primaryColor: const Color(0xFF5AB693),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF5AB693),
-          primary: const Color(0xFF5AB693),
-        ),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.theme, // Menggunakan tema yang sudah direvisi
       home: const HomePage(),
     );
   }
@@ -37,10 +31,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = const [
-    DasborScreen(),
-    RiwayatScreen(),
-    PengaturanScreen(),
+  final List<Widget> _screens = [
+    const DasborScreen(),
+    const RiwayatScreen(),
+    const PengaturanScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -51,6 +45,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // BottomNavigationBar akan menggunakan tema dari AppTheme secara otomatis
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -66,7 +61,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF5AB693),
         onTap: _onItemTapped,
       ),
     );
