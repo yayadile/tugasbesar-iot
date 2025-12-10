@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+// import 'firebase_options.dart'; // <--- HAPUS ATAU KOMENTARI BARIS INI
 import 'dasbor_screen.dart';
 import 'riwayat_screen.dart';
 import 'pengaturan_screen.dart';
 import 'theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // --- BAGIAN YANG DIEDIT ---
+  // Kita hapus parameter 'options'.
+  // Dengan begini, Flutter akan otomatis mencari file 'google-services.json'
+  // di folder android/app yang sudah kamu setup tadi.
+  await Firebase.initializeApp(); 
+  // --------------------------
+
   runApp(const MyApp());
 }
 
@@ -14,8 +25,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // Opsional: Biar pita 'debug' hilang
       title: 'IoT Health Monitor',
-      theme: AppTheme.theme, // Menggunakan tema yang sudah direvisi
+      theme: AppTheme.theme, 
       home: const HomePage(),
     );
   }
@@ -45,7 +57,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // BottomNavigationBar akan menggunakan tema dari AppTheme secara otomatis
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(

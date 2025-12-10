@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'theme.dart'; // Import AppColors
+import 'package:firebase_database/firebase_database.dart';
+import 'theme.dart';
 
 class PengaturanScreen extends StatefulWidget {
   const PengaturanScreen({super.key});
@@ -9,137 +10,136 @@ class PengaturanScreen extends StatefulWidget {
 }
 
 class _PengaturanScreenState extends State<PengaturanScreen> {
-  bool _notificationsEnabled = true;
+  final String userId = 'user_123'; 
+  late DatabaseReference _userRef;
+
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _userRef = FirebaseDatabase.instance.ref('users/$userId');
+    _loadUserData();
+  }
+
+  void _loadUserData() {
+    _userRef.onValue.listen((event) {
+      final data = event.snapshot.value;
+      if (data != null && data is Map) {
+        if (mounted) {
+          setState(() {
+            _nameController.text = data['name'] ?? '';
+            _emailController.text = data['email'] ?? '';
+            _phoneController.text = data['phone'] ?? '';
+            _ageController.text = data['age']?.toString() ?? '';
+            _weightController.text = data['weight']?.toString() ?? '';
+          });
+        }
+      }
+    });
+  }
+
+  Future<void> _saveProfile() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      try {
+        await _userRef.update({
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'phone': _phoneController.text,
+          'age': _ageController.text,
+          'weight': _weightController.text,
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profil berhasil diperbarui!'), backgroundColor: Colors.green),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Gagal: $e'), backgroundColor: Colors.red),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final foregroundColor = Theme.of(context).colorScheme.onSurface;
-    final successColor = const Color.fromARGB(255, 2, 115, 121); // Untuk Switch
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Pengaturan')),
+      appBar: AppBar(
+        title: const Text('Pengaturan Profil'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Profile Section
-            Card(
-              child: ListTile(
-                leading: CircleAvatar(
-                  radius: 28, // Perbesar avatar
-                  backgroundColor: AppColors.primaryBlue.withOpacity(0.1), // Gunakan primary color baru
-                  child: Icon(Icons.person, color: AppColors.primaryBlue),
-                ),
-                title: Text(
-                  'Zakia',
-                  style: textTheme.titleMedium!.copyWith(color: foregroundColor), // Perbesar teks
-                ),
-                subtitle: Text(
-                  'Lihat & edit profil',
-                  style: textTheme.bodyLarge!.copyWith(color: AppColors.textGrey), // Perbesar teks
-                ),
-                trailing: Icon(Icons.chevron_right, color: AppColors.textGrey),
-                onTap: () {},
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              const CircleAvatar(
+                radius: 40,
+                child: Icon(Icons.person, size: 40),
               ),
-            ),
-            const SizedBox(height: 20),
-            // Account Section
-            Text(
-              'AKUN',
-              style: textTheme.bodyMedium!.copyWith(
-                fontSize: 16, // Perbesar teks
-                fontWeight: FontWeight.bold,
-                color: AppColors.textGrey,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Card(
-              child: Column(
+              const SizedBox(height: 20),
+              _buildTextField("Nama Lengkap", _nameController, Icons.person),
+              const SizedBox(height: 12),
+              _buildTextField("Email", _emailController, Icons.email),
+              const SizedBox(height: 12),
+              _buildTextField("No. Telepon", _phoneController, Icons.phone),
+              const SizedBox(height: 12),
+              Row(
                 children: [
-                  _buildSettingsTile(
-                    context,
-                    title: 'Nama Pengguna',
-                    onTap: () {},
-                  ),
-                  const Divider(height: 1),
-                  _buildSettingsTile(
-                    context,
-                    title: 'Kata Sandi',
-                    onTap: () {},
-                  ),
-                  const Divider(height: 1),
-                  _buildSettingsTile(
-                    context,
-                    title: 'ID Klien',
-                    onTap: () {},
-                  ),
+                  Expanded(child: _buildTextField("Umur (Thn)", _ageController, Icons.cake)),
+                  const SizedBox(width: 12),
+                  Expanded(child: _buildTextField("Berat (Kg)", _weightController, Icons.monitor_weight)),
                 ],
               ),
-            ),
-            const SizedBox(height: 20),
-            // Settings Section
-            Text(
-              'PENGATURAN',
-              style: textTheme.bodyMedium!.copyWith(
-                fontSize: 16, // Perbesar teks
-                fontWeight: FontWeight.bold,
-                color: AppColors.textGrey,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Card(
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: Icon(Icons.notifications, color: foregroundColor),
-                    title: Text(
-                      'Notifikasi',
-                      style: textTheme.bodyLarge, // Perbesar teks
-                    ),
-                    trailing: Switch(
-                      value: _notificationsEnabled,
-                      onChanged: (value) {
-                        setState(() {
-                          _notificationsEnabled = value;
-                        });
-                      },
-                      activeColor: successColor, // Menggunakan successColor
-                    ),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _saveProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryBlue,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: Icon(Icons.info, color: foregroundColor),
-                    title: Text(
-                      'Tentang Aplikasi',
-                      style: textTheme.bodyLarge, // Perbesar teks
-                    ),
-                    trailing: Icon(Icons.chevron_right, color: AppColors.textGrey),
-                    onTap: () {},
-                  ),
-                ],
+                  child: _isLoading 
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('SIMPAN PERUBAHAN', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSettingsTile(
-    BuildContext context, {
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    final textTheme = Theme.of(context).textTheme;
-    return ListTile(
-      title: Text(
-        title,
-        style: textTheme.bodyLarge, // Perbesar teks
+  Widget _buildTextField(String label, TextEditingController controller, IconData icon) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      trailing: Icon(Icons.chevron_right, color: AppColors.textGrey),
-      onTap: onTap,
+      validator: (value) => value!.isEmpty ? 'Tidak boleh kosong' : null,
     );
   }
 }
